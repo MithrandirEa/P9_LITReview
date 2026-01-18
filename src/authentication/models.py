@@ -16,7 +16,6 @@ class User(AbstractUser):
         (SUBSCRIBER, 'Abonné'),
     )
 
-    profile_picture = models.ImageField()
     role = models.CharField(
         max_length=30,
         choices=ROLE_CHOICES,      

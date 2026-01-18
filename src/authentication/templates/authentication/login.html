@@ -1,12 +1,33 @@
 {% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
 
 {% block content %}
+<div class="row justify-content-center align-items-center min-vh-100 m-0">
+    <div class="col-md-6 col-lg-4">
+        <div class="card shadow-lg border-0">
+            <img src="{% static 'image/LITrevu banner.png' %}" 
+                 class="card-img-top" 
+                 alt="LITRevu Banner"
+                 style="height: 150px; object-fit: cover;">
+            
+            <div class="card-body p-4 p-md-5">
+                <h1 class="text-center fw-bold mb-4">Connectez-vous</h1>
+                
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg">Se connecter</button>
+                    </div>
+                </form>
 
-    <p>{{ message }}</p>
-    <form method="post">
-        {{ form.as_p }}
-        {% csrf_token %}
-        <button type="submit" >Se connecter</button>
-    </form>
-    <p>Pas encore de compte ? <a href="{% url 'signup' %}">Inscrivez-vous ici</a></p>
+                <div class="text-center mt-4">
+                    <a href="{% url 'signup' %}" class="text-decoration-none">Pas encore membre ?Inscrivez-vous ici</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock content %}
