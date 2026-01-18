@@ -25,7 +25,7 @@ urlpatterns = [
 
     # Path de création de critiques et de tickets
     path('create-revue/', flux.views.create_review, name='create_review'),
-    path('create-ticket/<int:post_id>/', flux.views.create_ticket, name='create_ticket'),
+    path('create-ticket/', flux.views.create_ticket, name='create_ticket'),
 
 
 
