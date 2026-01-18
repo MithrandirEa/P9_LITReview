@@ -9,5 +9,5 @@ class SignupForm(UserCreationForm):
 
 
 class ChangePasswordForm(PasswordChangeForm):
-        model = get_user_model()
-        fields = ('password1', 'password2')
+    model = get_user_model()
+    fields = ('password1', 'password2')
