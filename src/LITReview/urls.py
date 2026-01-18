@@ -14,7 +14,7 @@ urlpatterns = [
         redirect_authenticated_user=True),
         name='login'),
     path('signup/', authentication.views.signup_page, name='signup'),
-    path('logout/', LogoutView.as_view(), name='logout'),
+    path('logout/', LogoutView.as_view(next_page='login'), name='logout'),
 
     path('flux/', flux.views.flux, name='flux'),
     path('posts/', flux.views.posts, name='posts'),
