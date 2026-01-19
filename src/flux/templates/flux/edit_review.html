@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container py-4">
+    <h2>Modifier la critique</h2>
+    
+    <div class="card mb-4 bg-light">
+        <div class="card-header">
+            <h5>Ticket associé</h5>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">{{ review.ticket.title }}</h5>
+            <p class="card-text">{{ review.ticket.description }}</p>
+            {% if review.ticket.image %}
+                <div class="mb-2">
+                    <img src="{{ review.ticket.image.url }}" class="img-fluid" style="max-height: 300px" alt="Image du ticket">
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                {{ form.headline|as_crispy_field }}
+                {{ form.body|as_crispy_field }}
+                
+                {% include "flux/partials/star_rating_input.html" with rating_field=form.rating %}
+                
+                <div class="d-flex gap-2 mt-3">
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                    <a href="{% url 'posts' %}" class="btn btn-secondary">Annuler</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}

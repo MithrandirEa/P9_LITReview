@@ -1,13 +1,13 @@
 <!-- Affichage de la note en étoiles -->
 <div class="mb-2">
     <strong>Note : </strong>
-    {% for i in "12345" %}
-        {% if forloop.counter <= rating %}
-            <span class="star-filled">★</span>
-        {% else %}
-            <span class="star-empty">☆</span>
-        {% endif %}
-    {% endfor %}
+    {% with rating_int=rating|default:0 %}
+        {% if rating_int >= 1 %}<span class="star-filled">★</span>{% else %}<span class="star-empty">☆</span>{% endif %}
+        {% if rating_int >= 2 %}<span class="star-filled">★</span>{% else %}<span class="star-empty">☆</span>{% endif %}
+        {% if rating_int >= 3 %}<span class="star-filled">★</span>{% else %}<span class="star-empty">☆</span>{% endif %}
+        {% if rating_int >= 4 %}<span class="star-filled">★</span>{% else %}<span class="star-empty">☆</span>{% endif %}
+        {% if rating_int >= 5 %}<span class="star-filled">★</span>{% else %}<span class="star-empty">☆</span>{% endif %}
+    {% endwith %}
 </div>
 
 <style>

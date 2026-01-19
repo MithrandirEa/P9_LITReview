@@ -8,9 +8,9 @@
         <div class="card mb-4 shadow-sm">
             <div class="card-body">
                 {% if post.is_review %}
-                    {% include "flux/partials/review_card.html" with review=post %}
+                    {% include "flux/partials/review_card.html" with review=post show_actions=True %}
                 {% else %}
-                    {% include "flux/partials/ticket_card.html" with ticket=post %}
+                    {% include "flux/partials/ticket_card.html" with ticket=post show_actions=True %}
                 {% endif %}
             </div>
         </div>  

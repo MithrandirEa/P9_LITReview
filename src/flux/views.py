@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import get_user_model
-from flux.forms import TicketForm, ReviewForm
+from flux.forms import TicketForm, ReviewForm, ReviewReplyForm
 from flux.models import Ticket, Review, UserFollows
 
 User = get_user_model()
@@ -135,16 +135,18 @@ def create_review_reply(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id)
     
     if request.method == 'POST':
-        review_form = ReviewForm(request.POST)
+        review_form = ReviewReplyForm(request.POST)
         if review_form.is_valid():
             review = review_form.save(commit=False)
             review.user = request.user
             review.ticket = ticket
+            # Générer automatiquement le headline basé sur le titre du ticket
+            review.headline = f"Critique de {ticket.title}"
             review.save()
             messages.success(request, "Votre critique a été publiée avec succès.")
             return redirect('flux')
     else:
-        review_form = ReviewForm()
+        review_form = ReviewReplyForm()
     
     return render(request, 'flux/create_review_reply.html', {
         'review_form': review_form,
@@ -177,3 +179,73 @@ def unfollow_user(request, user_id):
         else:
             messages.error(request, "Vous ne suiviez pas cet utilisateur.")
     return redirect('subscriptions')
+
+@login_required
+def edit_ticket(request, ticket_id):
+    ticket = get_object_or_404(Ticket, id=ticket_id)
+    
+    # Vérifier que l'utilisateur est bien le propriétaire
+    if ticket.user != request.user:
+        messages.error(request, "Vous ne pouvez pas modifier ce ticket.")
+        return redirect('posts')
+    
+    if request.method == 'POST':
+        form = TicketForm(request.POST, request.FILES, instance=ticket)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Votre ticket a été modifié avec succès.")
+            return redirect('posts')
+    else:
+        form = TicketForm(instance=ticket)
+    
+    return render(request, 'flux/edit_ticket.html', {'form': form, 'ticket': ticket})
+
+@login_required
+def delete_ticket(request, ticket_id):
+    ticket = get_object_or_404(Ticket, id=ticket_id)
+    
+    # Vérifier que l'utilisateur est bien le propriétaire
+    if ticket.user != request.user:
+        messages.error(request, "Vous ne pouvez pas supprimer ce ticket.")
+        return redirect('posts')
+    
+    if request.method == 'POST':
+        ticket.delete()
+        messages.success(request, "Votre ticket a été supprimé avec succès.")
+    
+    return redirect('posts')
+
+@login_required
+def edit_review(request, review_id):
+    review = get_object_or_404(Review, id=review_id)
+    
+    # Vérifier que l'utilisateur est bien le propriétaire
+    if review.user != request.user:
+        messages.error(request, "Vous ne pouvez pas modifier cette critique.")
+        return redirect('posts')
+    
+    if request.method == 'POST':
+        form = ReviewForm(request.POST, instance=review)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Votre critique a été modifiée avec succès.")
+            return redirect('posts')
+    else:
+        form = ReviewForm(instance=review)
+    
+    return render(request, 'flux/edit_review.html', {'form': form, 'review': review})
+
+@login_required
+def delete_review(request, review_id):
+    review = get_object_or_404(Review, id=review_id)
+    
+    # Vérifier que l'utilisateur est bien le propriétaire
+    if review.user != request.user:
+        messages.error(request, "Vous ne pouvez pas supprimer cette critique.")
+        return redirect('posts')
+    
+    if request.method == 'POST':
+        review.delete()
+        messages.success(request, "Votre critique a été supprimée avec succès.")
+    
+    return redirect('posts')

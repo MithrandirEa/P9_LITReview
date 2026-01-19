@@ -31,7 +31,6 @@
         <div class="card-body">
             <form method="post">
                 {% csrf_token %}
-                {{ review_form.headline|as_crispy_field }}
                 {{ review_form.body|as_crispy_field }}
                 
                 {% include "flux/partials/star_rating_input.html" with rating_field=review_form.rating %}
