@@ -19,13 +19,13 @@
                 <div class="mb-5 p-4 border rounded shadow-sm bg-white">
                     
                     {% if post.content_type == 'TICKET' %}
-                        {% include "flux/partials/ticket_card.html" with ticket=post %}
+                        {% include "flux/partials/ticket_card_snippet.html" with ticket=post %}
                         <div class="d-flex justify-content-end mt-3">
                             <a href="{% url 'create_review_reply' post.id %}" class="btn btn-primary btn-sm">Créer une critique</a>
                         </div>
 
                     {% else %}
-                        {% include "flux/partials/review_card.html" with review=post %}
+                        {% include "flux/partials/review_card_snippet.html" with review=post %}
                     {% endif %}
 
                 </div>

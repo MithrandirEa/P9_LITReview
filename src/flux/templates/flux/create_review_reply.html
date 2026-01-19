@@ -33,7 +33,7 @@
                 {% csrf_token %}
                 {{ review_form.body|as_crispy_field }}
                 
-                {% include "flux/partials/star_rating_input.html" with rating_field=review_form.rating %}
+                {% include "flux/partials/star_rating_input_snippet.html" with rating_field=review_form.rating %}
                 
                 <button type="submit" class="btn btn-primary">Publier la critique</button>
                 <a href="{% url 'flux' %}" class="btn btn-secondary">Annuler</a>

@@ -21,7 +21,7 @@
     <h3 class="text-center mb-4">Abonnements</h3>
     <div class="row justify-content-center">
         <div class="col-md-10 col-lg-8">
-            {% include "flux/partials/user_list.html" with users=users_followed show_action=True action_url='unfollow' action_text='Désabonner' empty_message='Vous ne suivez personne pour le moment.' %}
+            {% include "flux/partials/user_list_snippet.html" with users=users_followed show_action=True action_url='unfollow' action_text='Désabonner' empty_message='Vous ne suivez personne pour le moment.' %}
         </div>
     </div>
 </section>
