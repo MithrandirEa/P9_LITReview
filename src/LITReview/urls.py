@@ -56,6 +56,8 @@ urlpatterns = [
 
     # Path pour le système d'abonnement
     path('unfollow/<int:user_id>/', flux.views.unfollow_user, name='unfollow'),
+    path('block/<int:user_id>/', flux.views.block_user, name='block'),
+    path('unblock/<int:user_id>/', flux.views.unblock_user, name='unblock'),
 ]
 
 if settings.DEBUG:

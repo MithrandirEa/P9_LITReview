@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from flux.forms import TicketForm, ReviewForm, ReviewReplyForm
-from flux.models import Ticket, Review, UserFollows
+from flux.models import Ticket, Review, UserFollows, UserBlocks
 
 User = get_user_model()
 
@@ -115,9 +115,18 @@ def subscriptions(request):
             followed_user=request.user
         ).values_list('user', flat=True)
     )
+
+    # Récupération des utilisateurs bloqués
+    blocked_users = User.objects.filter(
+        id__in=UserBlocks.objects.filter(user=request.user).values_list(
+            'blocked_user', flat=True
+        )
+    )
+
     context = {
         'users_followed': users_followed,
         'followers': followers,
+        'blocked_users': blocked_users,
     }
     return render(request, 'flux/subscriptions.html', context)
 
@@ -273,3 +282,59 @@ def delete_review(request, review_id):
         )
 
     return redirect('posts')
+
+
+@login_required
+def block_user(request, user_id):
+    if request.method == 'POST':
+        user_to_block = get_object_or_404(User, id=user_id)
+
+        if user_to_block == request.user:
+            messages.error(
+                request, "Vous ne pouvez pas vous bloquer vous-même."
+            )
+        elif UserBlocks.objects.filter(
+            user=request.user, blocked_user=user_to_block
+        ).exists():
+            messages.warning(
+                request, f"Vous avez déjà bloqué {user_to_block.username}."
+            )
+        else:
+            # Créer le blocage
+            UserBlocks.objects.create(
+                user=request.user, blocked_user=user_to_block
+            )
+
+            # Supprimer les relations d'abonnement mutuelles
+            UserFollows.objects.filter(
+                user=request.user, followed_user=user_to_block
+            ).delete()
+            UserFollows.objects.filter(
+                user=user_to_block, followed_user=request.user
+            ).delete()
+
+            messages.success(
+                request, f"Vous avez bloqué {user_to_block.username}."
+            )
+    return redirect('subscriptions')
+
+
+@login_required
+def unblock_user(request, user_id):
+    if request.method == 'POST':
+        user_to_unblock = get_object_or_404(User, id=user_id)
+        block_relation = UserBlocks.objects.filter(
+            user=request.user,
+            blocked_user=user_to_unblock
+        )
+        if block_relation.exists():
+            block_relation.delete()
+            messages.success(
+                request,
+                f"Vous avez débloqué {user_to_unblock.username}."
+            )
+        else:
+            messages.error(
+                request, "Vous n'aviez pas bloqué cet utilisateur."
+            )
+    return redirect('subscriptions')
