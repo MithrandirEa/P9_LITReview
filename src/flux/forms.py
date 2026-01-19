@@ -13,8 +13,15 @@ class ReviewForm(forms.ModelForm):
         labels = {
             'headline': 'Titre',
             'body': 'Commentaire',
-            'rating': 'Note (0 à 5 étoiles)',
+            'rating': 'Note',
         }
+        widgets = {
+            'rating': forms.RadioSelect(choices=[(i, f'{i} étoile{"s" if i > 1 else ""}') for i in range(1, 6)]),
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['rating'].widget.attrs.update({'class': 'star-rating'})
 
 class TicketForm(forms.ModelForm):
     class Meta:

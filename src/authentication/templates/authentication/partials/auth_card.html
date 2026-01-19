@@ -1,0 +1,12 @@
+{% load static %}
+<!-- Carte d'authentification avec bannière -->
+<div class="card shadow-lg border-0">
+    <img src="{% static 'image/LITrevu banner.png' %}" 
+         class="card-img-top" 
+         alt="LITRevu Banner"
+         style="height: {{ banner_height|default:'150px' }}; object-fit: cover;">
+    
+    <div class="card-body p-4 p-md-5">
+        {% block card_content %}{% endblock %}
+    </div>
+</div>

@@ -22,7 +22,10 @@
                 Critique
             </div>
             <div class="card-body">
-                {{ review_form|crispy }}
+                {{ review_form.headline|as_crispy_field }}
+                {{ review_form.body|as_crispy_field }}
+                
+                {% include "flux/partials/star_rating_input.html" with rating_field=review_form.rating %}
             </div>
         </div>
 

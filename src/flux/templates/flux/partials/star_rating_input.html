@@ -1,0 +1,41 @@
+<!-- Widget d'étoiles cliquables pour les formulaires de critique -->
+<div class="mb-3">
+    <label class="form-label">Note</label>
+    <div class="star-rating-input">
+        {% for value, label in rating_field.field.widget.choices %}
+            <input type="radio" name="rating" id="rating_{{ value }}" value="{{ value }}" 
+                   {% if rating_field.value == value %}checked{% endif %}>
+            <label for="rating_{{ value }}" title="{{ label }}">★</label>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+.star-rating-input {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    width: fit-content;
+}
+
+.star-rating-input input[type="radio"] {
+    display: none;
+}
+
+.star-rating-input label {
+    cursor: pointer;
+    font-size: 2.5rem;
+    color: #e0e0e0;
+    transition: color 0.2s;
+    padding: 0 0.1rem;
+}
+
+.star-rating-input input[type="radio"]:checked ~ label {
+    color: #ffc107;
+}
+
+.star-rating-input label:hover,
+.star-rating-input label:hover ~ label {
+    color: #ffc107;
+}
+</style>

@@ -1,0 +1,18 @@
+<!-- Liste d'utilisateurs avec action -->
+<div class="list-group shadow-sm">
+    {% for user in users %}
+        <div class="list-group-item d-flex justify-content-between align-items-center p-3">
+            <span class="fw-bold fs-5 text-dark">{{ user.username }}</span>
+            {% if show_action %}
+                <form method="post" action="{% url action_url user.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-3">
+                        {{ action_text }}
+                    </button>
+                </form>
+            {% endif %}
+        </div>
+    {% empty %}
+        <p class="text-center text-muted py-3">{{ empty_message }}</p>
+    {% endfor %}
+</div>

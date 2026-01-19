@@ -8,37 +8,9 @@
         <div class="card mb-4 shadow-sm">
             <div class="card-body">
                 {% if post.is_review %}
-                    <!-- Affichage d'une critique -->
-                    <h5 class="card-title">Critique : {{ post.title }}</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">Publié le {{ post.time_created|date:"d/m/Y H:i" }}</h6>
-                    <p class="card-text">{{ post.content }}</p>
-                    {% if post.rating %}
-                        <p class="card-text"><strong>Note : {{ post.rating }}/5</strong></p>
-                    {% endif %}
-                    
-                    <!-- Ticket associé à la critique -->
-                    <div class="card mt-3 bg-light">
-                        <div class="card-body">
-                            <h6 class="card-subtitle mb-2 text-muted">En réponse au ticket :</h6>
-                            <h5 class="card-title">{{ post.ticket.title }}</h5>
-                            <p class="card-text">{{ post.ticket.description }}</p>
-                            {% if post.ticket.image %}
-                                <div class="mb-2">
-                                    <img src="{{ post.ticket.image.url }}" class="img-fluid" style="max-height: 300px" alt="Image du ticket">
-                                </div>
-                            {% endif %}
-                        </div>
-                    </div>
+                    {% include "flux/partials/review_card.html" with review=post %}
                 {% else %}
-                    <!-- Affichage d'un ticket -->
-                    <h5 class="card-title">Ticket : {{ post.title }}</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">Publié le {{ post.time_created|date:"d/m/Y H:i" }}</h6>
-                    <p class="card-text">{{ post.content }}</p>
-                    {% if post.image %}
-                        <div class="mb-2">
-                            <img src="{{ post.image.url }}" class="img-fluid" style="max-height: 300px" alt="Image du ticket">
-                        </div>
-                    {% endif %}
+                    {% include "flux/partials/ticket_card.html" with ticket=post %}
                 {% endif %}
             </div>
         </div>  

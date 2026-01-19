@@ -14,12 +14,48 @@ User = get_user_model()
 
 @login_required
 def flux(request):
-    return render(request, 'flux/flux.html')
+    # Récupérer les IDs des utilisateurs suivis
+    followed_users = User.objects.filter(
+        id__in=UserFollows.objects.filter(user=request.user).values_list('followed_user', flat=True)
+    )
+    
+    # Récupérer les critiques de l'utilisateur et des utilisateurs suivis
+    reviews = Review.objects.filter(user__in=followed_users) | Review.objects.filter(user=request.user)
+    
+    # Récupérer les IDs des tickets qui ont déjà une critique
+    reviewed_ticket_ids = reviews.values_list('ticket_id', flat=True)
+    
+    # Récupérer les tickets de l'utilisateur et des utilisateurs suivis, en excluant ceux qui ont déjà une critique
+    tickets = (Ticket.objects.filter(user__in=followed_users) | Ticket.objects.filter(user=request.user)).exclude(id__in=reviewed_ticket_ids)
+
+    # Créer une liste unifiée
+    posts = []
+    
+    for ticket in tickets:
+        ticket.content_type = 'TICKET'
+        ticket.content = ticket.description
+        posts.append(ticket)
+    
+    for review in reviews:
+        review.content_type = 'REVIEW'
+        review.title = review.headline
+        review.content = review.body
+        posts.append(review)
+    
+    # Tri par date de création
+    posts = sorted(posts, key=lambda post: post.time_created, reverse=True)
+
+    return render(request, 'flux/flux.html', context={'posts': posts})
 
 @login_required
 def posts(request):
-    tickets = Ticket.objects.filter(user=request.user)
     reviews = Review.objects.filter(user=request.user)
+    
+    # Récupérer les IDs des tickets qui ont déjà une critique de l'utilisateur
+    reviewed_ticket_ids = reviews.values_list('ticket_id', flat=True)
+    
+    # Exclure ces tickets de la liste
+    tickets = Ticket.objects.filter(user=request.user).exclude(id__in=reviewed_ticket_ids)
 
     posts_data = []
     
@@ -92,6 +128,27 @@ def create_review(request):
     return render(request, 'flux/create_review.html', {
         'review_form': review_form,
         'ticket_form': ticket_form
+    })
+
+@login_required
+def create_review_reply(request, ticket_id):
+    ticket = get_object_or_404(Ticket, id=ticket_id)
+    
+    if request.method == 'POST':
+        review_form = ReviewForm(request.POST)
+        if review_form.is_valid():
+            review = review_form.save(commit=False)
+            review.user = request.user
+            review.ticket = ticket
+            review.save()
+            messages.success(request, "Votre critique a été publiée avec succès.")
+            return redirect('flux')
+    else:
+        review_form = ReviewForm()
+    
+    return render(request, 'flux/create_review_reply.html', {
+        'review_form': review_form,
+        'ticket': ticket
     })
 
 @login_required

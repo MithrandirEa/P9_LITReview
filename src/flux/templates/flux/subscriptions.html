@@ -21,21 +21,7 @@
     <h3 class="text-center mb-4">Abonnements</h3>
     <div class="row justify-content-center">
         <div class="col-md-10 col-lg-8">
-            <div class="list-group shadow-sm">
-                {% for following in users_followed %}
-                    <div class="list-group-item d-flex justify-content-between align-items-center p-3">
-                        <span class="fw-bold fs-5 text-dark">{{ following.username }}</span>
-                        <form method="post" action="{% url 'unfollow' following.id %}">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-3">
-                                Désabonner
-                            </button>
-                        </form>
-                    </div>
-                {% empty %}
-                    <p class="text-center text-muted py-3">Vous ne suivez personne pour le moment.</p>
-                {% endfor %}
-            </div>
+            {% include "flux/partials/user_list.html" with users=users_followed show_action=True action_url='unfollow' action_text='Désabonner' empty_message='Vous ne suivez personne pour le moment.' %}
         </div>
     </div>
 </section>

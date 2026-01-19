@@ -3,13 +3,34 @@
 
 {% block content %}
 <div class="container py-1">
-<div class="row justify-content-center mt-4 gy-3">
-    <div class="col-md-3 d-grid">
-        <a href="{% url 'ask_ticket' %}" class="btn btn-primary btn-lg">Demander une critique</a>
-    </div>
-    <div class="col-md-3 d-grid">
-        <a href="{% url 'create_review' %}" class="btn btn-primary btn-lg">Créer une critique</a>
+    <div class="row justify-content-center mt-4 gy-3">
+        <div class="col-md-3 d-grid">
+            <a href="{% url 'ask_ticket' %}" class="btn btn-primary btn-lg">Demander une critique</a>
+        </div>
+        <div class="col-md-3 d-grid">
+            <a href="{% url 'create_review' %}" class="btn btn-primary btn-lg">Créer une critique</a>
+        </div>
     </div>
 </div>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            {% for post in posts %}
+                <div class="mb-5 p-4 border rounded shadow-sm bg-white">
+                    
+                    {% if post.content_type == 'TICKET' %}
+                        {% include "flux/partials/ticket_card.html" with ticket=post %}
+                        <div class="d-flex justify-content-end mt-3">
+                            <a href="{% url 'create_review_reply' post.id %}" class="btn btn-primary btn-sm">Créer une critique</a>
+                        </div>
+
+                    {% else %}
+                        {% include "flux/partials/review_card.html" with review=post %}
+                    {% endif %}
+
+                </div>
+            {% endfor %}
+        </div>
+    </div>
 </div>
 {% endblock content %}
