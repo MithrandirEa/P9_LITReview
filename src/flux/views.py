@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from flux.forms import TicketForm, ReviewForm
 
 """Le décorateur login_required garantit que seuls les utilisateurs
  authentifiés peuvent accéder à cette vue."""
@@ -23,4 +24,12 @@ def create_review(request):
 
 @login_required
 def ask_ticket(request):
-    return render(request, 'flux/ask_ticket.html')
+    form = TicketForm()
+    if request.method == 'POST':
+        form = TicketForm(request.POST, request.FILES)
+        if form.is_valid():
+            ticket = form.save(commit=False)
+            ticket.user = request.user
+            ticket.save()
+            return redirect('flux')
+    return render(request, 'flux/ask_ticket.html', {'form': form})
