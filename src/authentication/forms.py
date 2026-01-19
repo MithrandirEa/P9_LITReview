@@ -1,8 +1,8 @@
-from django import forms
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Layout, Row, Column
+from crispy_forms.layout import Layout, Row, Column
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
+
 
 class SignupForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
@@ -27,6 +27,8 @@ class SignupForm(UserCreationForm):
                 Column('password2', css_class='form-group col-md-6 mb-3'),
             ),
         )
+
+
 class ChangePasswordForm(PasswordChangeForm):
     model = get_user_model()
     fields = ('password1', 'password2')
