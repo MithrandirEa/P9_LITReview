@@ -10,68 +10,11 @@
 .star-filled {
     color: #ffc107;
     font-size: 1.5rem;
+    text-shadow: 0 1px 3px rgba(255, 193, 7, 0.3);
 }
 
 .star-empty {
-    color: #e0e0e0;
+    color: #d0d0d0;
     font-size: 1.5rem;
-}
-
-/* Système d'étoiles cliquables pour le formulaire */
-.star-rating {
-    display: flex;
-    flex-direction: row-reverse;
-    justify-content: flex-end;
-    gap: 0.5rem;
-}
-
-.star-rating input[type="radio"] {
-    display: none;
-}
-
-.star-rating label {
-    cursor: pointer;
-    font-size: 2rem;
-    color: #e0e0e0;
-    transition: color 0.2s;
-}
-
-.star-rating label:before {
-    content: '★';
-}
-
-.star-rating input[type="radio"]:checked ~ label,
-.star-rating label:hover,
-.star-rating label:hover ~ label {
-    color: #ffc107;
-}
-
-.star-rating {
-    flex-direction: row;
-}
-
-.star-rating input[type="radio"]:checked ~ label {
-    color: #e0e0e0;
-}
-
-.star-rating label:hover ~ label {
-    color: #e0e0e0;
-}
-
-/* Correction: les étoiles sélectionnées et précédentes doivent être jaunes */
-#div_id_rating .star-rating {
-    display: flex;
-    flex-direction: row;
-    gap: 0.2rem;
-}
-
-#div_id_rating .star-rating label {
-    order: 2;
-}
-
-#div_id_rating .star-rating input[type="radio"]:checked,
-#div_id_rating .star-rating input[type="radio"]:checked ~ input[type="radio"] {
-    + label {
-        color: #ffc107;
-    }
+    opacity: 0.6;
 }
