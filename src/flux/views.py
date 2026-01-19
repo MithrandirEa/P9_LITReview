@@ -19,8 +19,8 @@ def subscriptions(request):
 
 @login_required
 def create_review(request):
-    return render(request, 'flux/create_revue.html')
+    return render(request, 'flux/create_review.html')
 
 @login_required
-def create_ticket(request, post_id):
-    return render(request, 'flux/create_ticket.html', {'post_id': post_id})
+def ask_ticket(request):
+    return render(request, 'flux/ask_ticket.html')
