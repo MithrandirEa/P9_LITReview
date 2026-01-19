@@ -1,5 +1,32 @@
 {% extends "base.html" %}
-{% load static %}
 {% load crispy_forms_tags %}
 
-<!-- Template de création d'une critique -->
+<!-- Template de création d'une critique (et du ticket associé) -->
+{% block content %}
+<div class="container py-4">
+    <h2>Créer une critique</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="card mb-4">
+            <div class="card-header">
+                Ticket
+            </div>
+            <div class="card-body">
+                {{ ticket_form|crispy }}
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                Critique
+            </div>
+            <div class="card-body">
+                {{ review_form|crispy }}
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Envoyer</button>
+    </form>
+</div>
+{% endblock content %}

@@ -4,13 +4,5 @@
 
 <!-- Template de création d'un ticket (demande de critique) -->
 {% block content %}
-
-<div class="container py-4">
-    <h2>Créer un ticket</h2>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form|crispy }}
-        <button type="submit" class="btn btn-primary">Envoyer</button>
-    </form>
-</div>
+{% include "flux/partials/create_ticket_snippet.html" %}
 {% endblock content %}

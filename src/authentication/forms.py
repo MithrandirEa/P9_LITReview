@@ -7,8 +7,7 @@ from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 class SignupForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = get_user_model()
-        # On s'assure que tous les champs voulus sont présents
-        fields = ('username', 'email', 'first_name', 'last_name', 'role')
+        fields = ('username', 'email', 'first_name', 'last_name')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -27,7 +26,6 @@ class SignupForm(UserCreationForm):
                 Column('password1', css_class='form-group col-md-6 mb-3'),
                 Column('password2', css_class='form-group col-md-6 mb-3'),
             ),
-            'role',
         )
 class ChangePasswordForm(PasswordChangeForm):
     model = get_user_model()

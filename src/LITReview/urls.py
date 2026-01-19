@@ -3,6 +3,8 @@ from django.contrib.auth.views import (LoginView, LogoutView,
                                        PasswordChangeView, 
                                        PasswordChangeDoneView)
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 
 import authentication.views
 import flux.views
@@ -26,7 +28,13 @@ urlpatterns = [
     # Path de création de critiques et de tickets
     path('create-review/', flux.views.create_review, name='create_review'),
     path('ask-ticket/', flux.views.ask_ticket, name='ask_ticket'),
-
-
-
+    
+    # Path pour le système d'abonnement
+    path('unfollow/<int:user_id>/', flux.views.unfollow_user, name='unfollow'),
 ]
+
+
+
+if settings.DEBUG:
+    urlpatterns += static(
+        settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
