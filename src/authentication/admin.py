@@ -1,26 +1,9 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import User, Ticket, Review, UserFollows
+from .models import User
 
 # Register your models here.
 
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
     list_display = ('username', 'email', 'role', 'is_staff')
-
-@admin.register(Ticket)
-class TicketAdmin(admin.ModelAdmin):
-    list_display = ('title', 'user', 'time_created')
-    search_fields = ('title', 'user__username')
-    list_filter = ('time_created',)
-
-@admin.register(Review)
-class ReviewAdmin(admin.ModelAdmin):
-    list_display = ('headline', 'ticket', 'user', 'rating', 'time_created')
-    search_fields = ('headline', 'ticket__title', 'user__username')
-    list_filter = ('rating', 'time_created')
-
-@admin.register(UserFollows)
-class UserFollowsAdmin(admin.ModelAdmin):
-    list_display = ('user', 'followed_user')
-    search_fields = ('user__username', 'followed_user__username')

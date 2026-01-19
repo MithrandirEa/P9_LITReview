@@ -1,1 +1,63 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+ <!-- Espace chercher des utilisateur et le suivre -->
+<section class="mb-5">
+    <h3 class="text-center mb-4">Suivre d'autres utilisateurs</h3>
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <form method="post" class="input-group shadow-sm">
+                {% csrf_token %}
+                <input type="text" name="username" class="form-control form-control-lg" placeholder="Nom d'utilisateur">
+                <button class="btn btn-primary px-4" type="submit">Envoyer</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- Espace utilisateur suivis (+ se désabonner) -->
+ <section class="mb-5">
+    <h3 class="text-center mb-4">Abonnements</h3>
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            <div class="list-group shadow-sm">
+                {% for following in users_followed %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center p-3">
+                        <span class="fw-bold fs-5 text-dark">{{ following.username }}</span>
+                        <form method="post" action="{% url 'unfollow' following.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-3">
+                                Désabonner
+                            </button>
+                        </form>
+                    </div>
+                {% empty %}
+                    <p class="text-center text-muted py-3">Vous ne suivez personne pour le moment.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- Espace followers -->
+
+<section class="mb-5">
+    <h3 class="text-center mb-4">Abonnés</h3>
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            <ul class="list-group shadow-sm">
+                {% for follower in followers %}
+                    <li class="list-group-item p-3">
+                        <span class="fs-5">{{ follower.username }}</span>
+                    </li>
+                {% empty %}
+                    <p class="text-center text-muted py-3">Vous n'avez pas encore d'abonnés.</p>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</section>
+
+{% endblock content %}

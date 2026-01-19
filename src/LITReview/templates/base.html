@@ -11,37 +11,42 @@
         {% if user.is_authenticated %}
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm py-4" 
             style="background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
-            url('{% static 'image\header_banner_2.jpg' %}');
+            url('{% static 'image/header_banner_2.jpg' %}');
             background-size: cover; background-position: center;">
             <div class="container-fluid px-4">
-        {% endif %}
-                    <a class="navbar-brand d-none d-lg-block" href="{% url 'flux' %}">
-                        <h1 class="display-1 fw-bolder text-white" style="text-shadow: 3px 3px 6px rgba(0,0,0,0.7);">
-                            LITRevue
-                        </h1>
-                    </a>
-                </div>
+                <a class="navbar-brand d-none d-lg-block" href="{% url 'flux' %}">
+                    <h1 class="display-1 fw-bolder text-white mb-0" style="text-shadow: 3px 3px 6px rgba(0,0,0,0.7);">
+                        LITRevue
+                    </h1>
+                </a>
+                <a class="navbar-brand d-lg-none fw-bold fs-2 text-white" href="{% url 'flux' %}">
+                    LITRevue
+                </a>
 
-                <div class="d-flex justify-content-end align-items-center" style="flex: 1;">
-                    {% if user.is_authenticated %}
-                        <div class="navbar-nav fs-4 gap-3">
-                            <a class="nav-link {% if request.resolver_match.url_name == 'flux' %}active fw-bold{% endif %}" href="{% url 'flux' %}">Flux</a>
-                            <a class="nav-link {% if request.resolver_match.url_name == 'posts' %}active fw-bold{% endif %}" href="{% url 'posts' %}">Posts</a>
-                            <a class="nav-link {% if request.resolver_match.url_name == 'subscriptions' %}active fw-bold{% endif %}" href="{% url 'subscriptions' %}">Abonnements</a>
-                            <form method="post" action="{% url 'logout' %}" class="d-flex">
-                                {% csrf_token %}
-                                <button type="submit" class="nav-link bg-transparent border-0">Déconnexion</button>
-                            </form>
-                        </div>
-                    {% endif %}
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            
+                <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                    <div class="navbar-nav fs-4 gap-3 text-end text-lg-start">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'flux' %}active fw-bold{% endif %}" href="{% url 'flux' %}">Flux</a>
+                        <a class="nav-link {% if request.resolver_match.url_name == 'posts' %}active fw-bold{% endif %}" href="{% url 'posts' %}">Posts</a>
+                        <a class="nav-link {% if request.resolver_match.url_name == 'subscriptions' %}active fw-bold{% endif %}" href="{% url 'subscriptions' %}">Abonnements</a>
+                        <form method="post" action="{% url 'logout' %}" class="d-flex justify-content-end justify-content-lg-start">
+                            {% csrf_token %}
+                            <button type="submit" class="nav-link bg-transparent border-0">Déconnexion</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </nav>
+        {% endif %}
         
         <div class="container">
             {% block content %}
             {% endblock %}
         </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 
 </html>
