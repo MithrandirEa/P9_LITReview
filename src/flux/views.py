@@ -19,11 +19,13 @@ def flux(request):
             'followed_user', flat=True
         )
     )
-    # Récupérer les critiques de l'utilisateur et suivis
+    # Récupérer les critiques de l'utilisateur, des utilisateurssuivis,
+    # et les critiques sur les tickets créés par les suivis
     reviews = (
         Review.objects.filter(user__in=followed_users) |
-        Review.objects.filter(user=request.user)
-    )
+        Review.objects.filter(user=request.user) |
+        Review.objects.filter(ticket__user__in=followed_users)
+    ).distinct()
     # Récupérer les IDs des tickets qui ont déjà une critique
     reviewed_ticket_ids = reviews.values_list('ticket_id', flat=True)
 
