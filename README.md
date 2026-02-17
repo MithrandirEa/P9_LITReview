@@ -29,7 +29,7 @@ LITReview est une application permettant aux utilisateurs de :
 ### 1. Cloner le dépôt
 
 ```bash
-git clone <url-du-depot>
+git clone https://github.com/MithrandirEa/P9_LITReview.git
 cd LITReview
 ```
 
@@ -75,12 +75,6 @@ python manage.py migrate
 
 ```bash
 python manage.py createsuperuser
-```
-
-### 3. Collecte des fichiers statiques (optionnel pour développement)
-
-```bash
-python manage.py collectstatic
 ```
 
 ## Utilisation
