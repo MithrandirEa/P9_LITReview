@@ -2,13 +2,13 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import get_user_model
+
 from flux.forms import TicketForm, ReviewForm, ReviewReplyForm
 from flux.models import Ticket, Review, UserFollows, UserBlocks
 
 User = get_user_model()
 
-"""Le décorateur login_required garantit que seuls les utilisateurs
- authentifiés peuvent accéder à cette vue."""
+# ------------ Vues pour les onglets de l'app -------------
 
 
 @login_required
@@ -133,6 +133,9 @@ def subscriptions(request):
     return render(request, 'flux/subscriptions.html', context)
 
 
+# ------------ Vues pour les actions sur les tickets et critiques -------------
+
+
 @login_required
 def create_review(request):
     review_form = ReviewForm()
@@ -194,24 +197,6 @@ def ask_ticket(request):
 
 
 @login_required
-def unfollow_user(request, user_id):
-    if request.method == 'POST':
-        user_to_unfollow = get_object_or_404(User, id=user_id)
-        follow_relation = UserFollows.objects.filter(
-            user=request.user,
-            followed_user=user_to_unfollow
-        )
-        if follow_relation.exists():
-            follow_relation.delete()
-            messages.success(
-                request, f"Vous ne suivez plus {user_to_unfollow.username}."
-            )
-        else:
-            messages.error(request, "Vous ne suiviez pas cet utilisateur.")
-    return redirect('subscriptions')
-
-
-@login_required
 def edit_ticket(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id)
     # Vérifier que l'utilisateur est bien le propriétaire
@@ -232,19 +217,6 @@ def edit_ticket(request, ticket_id):
     return render(
         request, 'flux/edit_ticket.html', {'form': form, 'ticket': ticket}
     )
-
-
-@login_required
-def delete_ticket(request, ticket_id):
-    ticket = get_object_or_404(Ticket, id=ticket_id)
-    # Vérifier que l'utilisateur est bien le propriétaire
-    if ticket.user != request.user:
-        messages.error(request, "Vous ne pouvez pas supprimer ce ticket.")
-        return redirect('posts')
-    if request.method == 'POST':
-        ticket.delete()
-        messages.success(request, "Votre ticket a été supprimé avec succès.")
-    return redirect('posts')
 
 
 @login_required
@@ -271,6 +243,19 @@ def edit_review(request, review_id):
 
 
 @login_required
+def delete_ticket(request, ticket_id):
+    ticket = get_object_or_404(Ticket, id=ticket_id)
+    # Vérifier que l'utilisateur est bien le propriétaire
+    if ticket.user != request.user:
+        messages.error(request, "Vous ne pouvez pas supprimer ce ticket.")
+        return redirect('posts')
+    if request.method == 'POST':
+        ticket.delete()
+        messages.success(request, "Votre ticket a été supprimé avec succès.")
+    return redirect('posts')
+
+
+@login_required
 def delete_review(request, review_id):
     review = get_object_or_404(Review, id=review_id)
     # Vérifier que l'utilisateur est bien le propriétaire
@@ -284,6 +269,27 @@ def delete_review(request, review_id):
         )
 
     return redirect('posts')
+
+
+# ------------ Vues pour les actions sur le suivi et le blocage -------------
+
+
+@login_required
+def unfollow_user(request, user_id):
+    if request.method == 'POST':
+        user_to_unfollow = get_object_or_404(User, id=user_id)
+        follow_relation = UserFollows.objects.filter(
+            user=request.user,
+            followed_user=user_to_unfollow
+        )
+        if follow_relation.exists():
+            follow_relation.delete()
+            messages.success(
+                request, f"Vous ne suivez plus {user_to_unfollow.username}."
+            )
+        else:
+            messages.error(request, "Vous ne suiviez pas cet utilisateur.")
+    return redirect('subscriptions')
 
 
 @login_required

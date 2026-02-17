@@ -19,6 +19,7 @@ class ReviewForm(forms.ModelForm):
                     for i in range(5, 0, -1)
                 ]
             ),
+            'body': forms.Textarea(attrs={'rows': 4}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -42,6 +43,7 @@ class ReviewReplyForm(forms.ModelForm):
                     for i in range(5, 0, -1)
                 ]
             ),
+            'body': forms.Textarea(attrs={'rows': 4}),
         }
 
     def __init__(self, *args, **kwargs):

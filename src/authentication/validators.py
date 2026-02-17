@@ -8,10 +8,10 @@ class ContainsLetterValidator:
                 'Le mot de passe doit contenir au moins une lettre.',
                 code='password_no_letter'
             )
-        
+
     def get_help_text(self):
         return "Le mot de passe doit contenir au moins une lettre majuscule ou minuscule."
-    
+
 
 class ContainsNumberValidator:
     def validate(self, password, user=None):
@@ -20,7 +20,7 @@ class ContainsNumberValidator:
                 'Le mot de passe doit contenir au moins un chiffre.',
                 code='password_no_number'
             )
-        
+
     def get_help_text(self):
         return "Le mot de passe doit contenir au moins un chiffre (0-9)."
 
@@ -33,6 +33,6 @@ class ContainsSpecialCharacterValidator:
                 'Le mot de passe doit contenir au moins un caractère spécial.',
                 code='password_no_special_character'
             )
-        
+
     def get_help_text(self):
         return "Le mot de passe doit contenir au moins un caractère spécial (par exemple !, @, #, etc.)."
