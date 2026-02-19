@@ -82,6 +82,7 @@ def posts(request):
 
 @login_required
 def subscriptions(request):
+    # Gestion d'un nouvel abonnement
     if request.method == 'POST' and 'username' in request.POST:
         username = request.POST.get('username')
         try:
@@ -104,6 +105,7 @@ def subscriptions(request):
         except User.DoesNotExist:
             messages.error(request, f"L'utilisateur {username} n'existe pas.")
         return redirect('subscriptions')
+
     # Récupération des utilisateurs suivis
     users_followed = User.objects.filter(
         id__in=UserFollows.objects.filter(user=request.user).values_list(
@@ -184,7 +186,7 @@ def create_review_reply(request, ticket_id):
 
 
 @login_required
-def ask_ticket(request):
+def create_ticket(request):
     form = TicketForm()
     if request.method == 'POST':
         form = TicketForm(request.POST, request.FILES)
@@ -193,7 +195,7 @@ def ask_ticket(request):
             ticket.user = request.user
             ticket.save()
             return redirect('flux')
-    return render(request, 'flux/ask_ticket.html', {'form': form})
+    return render(request, 'flux/create_ticket.html', {'form': form})
 
 
 @login_required

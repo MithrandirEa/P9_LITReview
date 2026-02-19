@@ -30,7 +30,7 @@ urlpatterns = [
         flux.views.create_review_reply,
         name='create_review_reply'
     ),
-    path('ask-ticket/', flux.views.ask_ticket, name='ask_ticket'),
+    path('ask-ticket/', flux.views.create_ticket, name='create_ticket'),
 
     # Path pour l'édition et la suppression
     path(
