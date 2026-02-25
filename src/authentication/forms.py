@@ -5,6 +5,10 @@ from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 
 
 class SignupForm(UserCreationForm):
+    """
+    Formulaire d'inscription pour les utilisateurs.
+    Hérite de UserCreationForm et utilise Crispy Forms pour une mise en page personnalisée.
+    """
     class Meta(UserCreationForm.Meta):
         model = get_user_model()
         fields = ('username', 'email', 'first_name', 'last_name')
@@ -30,5 +34,9 @@ class SignupForm(UserCreationForm):
 
 
 class ChangePasswordForm(PasswordChangeForm):
+    """
+    Formulaire pour permettre aux utilisateurs de changer leur mot de passe.
+    Hérite de PasswordChangeForm.
+    """
     model = get_user_model()
     fields = ('password1', 'password2')

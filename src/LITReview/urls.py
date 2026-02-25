@@ -1,3 +1,9 @@
+"""
+Configuration des URLs pour le projet LITReview.
+
+Définit les routes pour l'authentification, le flux d'activité, la gestion des tickets/critiques
+et les abonnements.
+"""
 from django.contrib import admin
 from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import path

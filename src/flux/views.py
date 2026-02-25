@@ -13,6 +13,18 @@ User = get_user_model()
 
 @login_required
 def flux(request):
+    """
+    Vue principale du flux d'activité.
+    Affiche les tickets et les critiques des utilisateurs suivis, ainsi que ses propres posts.
+    Les éléments sont triés par date de création décroissante.
+    Exclut les tickets qui ont déjà reçu une critique de la part d'un utilisateur suivi.
+
+    Args:
+        request (HttpRequest): La requête HTTP.
+
+    Returns:
+        HttpResponse: Rend le template 'flux.html' avec le contexte des 'posts'.
+    """
     # Récupérer les IDs des utilisateurs suivis
     followed_users = User.objects.filter(
         id__in=UserFollows.objects.filter(user=request.user).values_list(
@@ -54,6 +66,18 @@ def flux(request):
 
 @login_required
 def posts(request):
+    """
+    Vue affichant les propres posts de l'utilisateur (tickets et critiques).
+    Permet de voir l'historique de ses contributions.
+    Exclut les tickets qui ont déjà reçu une critique de l'utilisateur lui-même (si applicable pour éviter doublons visuels,
+    bien que la logique ici semble exclure les tickets que l'User a déjà critiqué, ce qui est une règle métier).
+
+    Args:
+        request (HttpRequest): La requête HTTP.
+
+    Returns:
+        HttpResponse: Rend le template 'posts.html' avec la liste des posts.
+    """
     reviews = Review.objects.filter(user=request.user)
     # Récupérer les IDs des tickets qui ont déjà une critique
     reviewed_ticket_ids = reviews.values_list('ticket_id', flat=True)
@@ -82,6 +106,24 @@ def posts(request):
 
 @login_required
 def subscriptions(request):
+    """
+    Vue permettant de gérer les abonnements :
+    - S'abonner à un nouvel utilisateur.
+    - Voir la liste des utilisateurs que l'on suit.
+    - Voir la liste des utilisateurs bloqués.
+    - Voir la liste des abonnés (followers).
+
+    Gère les erreurs (utilisateur inexistant, auto-follow, déjà suivi).
+
+    Args:
+        request (HttpRequest): La requête HTTP, potentiellement POST pour s'abonner.
+
+    Returns:
+        HttpResponse: Rend le template 'subscriptions.html' avec les contextes :
+            'users_followed': Liste des utilisateurs suivis.
+            'followers': Liste des utilisateurs qui nous suivent.
+            'blocked_users': Liste des utilisateurs bloqués.
+    """
     # Gestion d'un nouvel abonnement
     if request.method == 'POST' and 'username' in request.POST:
         username = request.POST.get('username')
@@ -140,6 +182,17 @@ def subscriptions(request):
 
 @login_required
 def create_review(request):
+    """
+    Vue permettant de créer une critique (Review) en même temps qu'un ticket.
+    Utile quand l'utilisateur veut faire une critique d'un livre/article qu'il n'a pas encore demandé.
+    Gère deux formulaires simultanément : ReviewForm et TicketForm.
+
+    Args:
+        request (HttpRequest): La requête HTTP, potentiellement POST.
+
+    Returns:
+        HttpResponse: Rend le template 'create_review.html' ou redirige vers le flux.
+    """
     review_form = ReviewForm()
     ticket_form = TicketForm()
     if request.method == 'POST':
@@ -163,6 +216,18 @@ def create_review(request):
 
 @login_required
 def create_review_reply(request, ticket_id):
+    """
+    Vue permettant de répondre à un ticket existant en créant une critique.
+    Récupère le ticket associé par son ID.
+    Le titre de la critique est généré automatiquement.
+
+    Args:
+        request (HttpRequest): La requête HTTP.
+        ticket_id (int): L'ID du ticket auquel répondre.
+
+    Returns:
+        HttpResponse: Rend le template 'create_review_reply.html' ou redirige vers le flux.
+    """
     ticket = get_object_or_404(Ticket, id=ticket_id)
     if request.method == 'POST':
         review_form = ReviewReplyForm(request.POST)
@@ -187,6 +252,16 @@ def create_review_reply(request, ticket_id):
 
 @login_required
 def create_ticket(request):
+    """
+    Vue permettant de créer un nouveau ticket (demande de critique).
+    Le ticket peut contenir une image uploadée.
+
+    Args:
+        request (HttpRequest): La requête HTTP.
+
+    Returns:
+        HttpResponse: Rend le template 'create_ticket.html' ou redirige vers le flux.
+    """
     form = TicketForm()
     if request.method == 'POST':
         form = TicketForm(request.POST, request.FILES)
@@ -200,6 +275,17 @@ def create_ticket(request):
 
 @login_required
 def edit_ticket(request, ticket_id):
+    """
+    Vue permettant de modifier un ticket existant.
+    Vérifie que l'utilisateur est le propriétaire du ticket avant de permettre l'édition.
+
+    Args:
+        request (HttpRequest): La requête HTTP.
+        ticket_id (int): L'ID du ticket à modifier.
+
+    Returns:
+        HttpResponse: Rend le template 'edit_ticket.html' ou redirige vers 'posts'.
+    """
     ticket = get_object_or_404(Ticket, id=ticket_id)
     # Vérifier que l'utilisateur est bien le propriétaire
     if ticket.user != request.user:
@@ -212,6 +298,17 @@ def edit_ticket(request, ticket_id):
             messages.success(
                 request, "Votre ticket a été modifié avec succès."
             )
+    """
+    Vue permettant de modifier une critique existante.
+    Vérifie que l'utilisateur est le propriétaire de la critique avant de permettre l'édition.
+
+    Args:
+        request (HttpRequest): La requête HTTP.
+        review_id (int): L'ID de la critique à modifier.
+
+    Returns:
+        HttpResponse: Rend le template 'edit_review.html' ou redirige vers 'posts'.
+    """
             return redirect('posts')
     else:
         form = TicketForm(instance=ticket)
@@ -246,6 +343,18 @@ def edit_review(request, review_id):
 
 @login_required
 def delete_ticket(request, ticket_id):
+    """
+    Vue permettant de supprimer un ticket.
+    Vérifie que l'utilisateur est le propriétaire du ticket.
+    La suppression doit être confirmée par une requête POST.
+
+    Args:
+        request (HttpRequest): La requête HTTP (POST nécessaire pour supprimer).
+        ticket_id (int): L'ID du ticket à supprimer.
+
+    Returns:
+        HttpResponseRedirect: Redirige vers 'posts'.
+    """
     ticket = get_object_or_404(Ticket, id=ticket_id)
     # Vérifier que l'utilisateur est bien le propriétaire
     if ticket.user != request.user:
@@ -259,6 +368,18 @@ def delete_ticket(request, ticket_id):
 
 @login_required
 def delete_review(request, review_id):
+    """
+    Vue permettant de supprimer une critique.
+    Vérifie que l'utilisateur est le propriétaire de la critique.
+    La suppression doit être confirmée par une requête POST.
+
+    Args:
+        request (HttpRequest): La requête HTTP (POST nécessaire pour supprimer).
+        review_id (int): L'ID de la critique à supprimer.
+
+    Returns:
+        HttpResponseRedirect: Redirige vers 'posts'.
+    """
     review = get_object_or_404(Review, id=review_id)
     # Vérifier que l'utilisateur est bien le propriétaire
     if review.user != request.user:
@@ -273,11 +394,22 @@ def delete_review(request, review_id):
     return redirect('posts')
 
 
-# ------------ Vues pour les actions sur le suivi et le blocage -------------
+# ------------ Vues pour les actions sur le suivi et le blocage utilisateur -------------
 
 
 @login_required
 def unfollow_user(request, user_id):
+    """
+    Vue permettant de ne plus suivre un utilisateur.
+    Vérifie l'existence de la relation avant de supprimer.
+
+    Args:
+        request (HttpRequest): La requête HTTP (POST).
+        user_id (int): L'ID de l'utilisateur à ne plus suivre.
+
+    Returns:
+        HttpResponseRedirect: Redirige vers 'subscriptions'.
+    """
     if request.method == 'POST':
         user_to_unfollow = get_object_or_404(User, id=user_id)
         follow_relation = UserFollows.objects.filter(
@@ -296,6 +428,18 @@ def unfollow_user(request, user_id):
 
 @login_required
 def block_user(request, user_id):
+    """
+    Vue permettant de bloquer un utilisateur.
+    Supprime également tout abonnement existant (dans les deux sens) avec cet utilisateur.
+    Gère les erreurs (auto-block, déjà bloqué).
+
+    Args:
+        request (HttpRequest): La requête HTTP (POST).
+        user_id (int): L'ID de l'utilisateur à bloquer.
+
+    Returns:
+        HttpResponseRedirect: Redirige vers 'subscriptions'.
+    """
     if request.method == 'POST':
         user_to_block = get_object_or_404(User, id=user_id)
 
@@ -319,6 +463,17 @@ def block_user(request, user_id):
             UserFollows.objects.filter(
                 user=request.user, followed_user=user_to_block
             ).delete()
+    """
+    Vue permettant de débloquer un utilisateur.
+    Vérifie l'existence du blocage avant de supprimer.
+
+    Args:
+        request (HttpRequest): La requête HTTP (POST).
+        user_id (int): L'ID de l'utilisateur à débloquer.
+
+    Returns:
+        HttpResponseRedirect: Redirige vers 'subscriptions'.
+    """
             UserFollows.objects.filter(
                 user=user_to_block, followed_user=request.user
             ).delete()

@@ -6,11 +6,29 @@ from . import forms
 
 
 def logout_user(request):
+    """
+    Vue permettant de déconnecter l'utilisateur.
+
+    Args:
+        request (HttpRequest): La requête HTTP.
+
+    Returns:
+        HttpResponseRedirect: Redirige vers la page de connexion après la déconnexion.
+    """
     logout(request)
     return redirect('login')
 
 
 def signup_page(request):
+    """
+    Vue gérant l'inscription des nouveaux utilisateurs.
+
+    Args:
+        request (HttpRequest): La requête HTTP qui peut contenir les données du formulaire.
+
+    Returns:
+        HttpResponse: Rend le template d'inscription avec le formulaire ou redirige après une inscription réussie.
+    """
     form = forms.SignupForm()
     if request.method == 'POST':
         form = forms.SignupForm(request.POST)

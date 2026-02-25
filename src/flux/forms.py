@@ -4,6 +4,10 @@ from flux.models import Ticket, Review
 
 
 class ReviewForm(forms.ModelForm):
+    """
+    Formulaire pour créer ou modifier une critique complète (avec titre).
+    Utilisé généralement pour créer une critique sans partir d'un ticket existant (création conjointe).
+    """
     class Meta:
         model = Review
         fields = ['headline', 'body', 'rating']
@@ -28,7 +32,10 @@ class ReviewForm(forms.ModelForm):
 
 
 class ReviewReplyForm(forms.ModelForm):
-    """Formulaire pour répondre à un ticket existant (sans titre)"""
+    """
+    Formulaire pour répondre à un ticket existant.
+    Ne contient pas le champ 'headline' car il est souvent déduit du ticket.
+    """
     class Meta:
         model = Review
         fields = ['body', 'rating']
@@ -49,7 +56,10 @@ class ReviewReplyForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['rating'].widget.attrs.update({'class': 'star-rating'})
-
+"""
+    Formulaire pour la création et la modification de tickets.
+    """
+    
 
 class TicketForm(forms.ModelForm):
     class Meta:
